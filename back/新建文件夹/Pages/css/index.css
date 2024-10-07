@@ -1,0 +1,33 @@
+.section {
+  margin: 20px 0;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.section-header {
+  position: relative;
+}
+.section-header-select-group {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+.section-chart {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.section-chart-ca {
+  position: relative;
+}
+
+.section-policy {
+  position: relative;
+}
+
+.section-policy-select {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}

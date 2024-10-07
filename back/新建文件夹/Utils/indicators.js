@@ -1,0 +1,151 @@
+const { log, error } = console;
+const tulind = require('tulind');
+const util = require('util');
+// Promisify Functions
+const sma_async = util.promisify(tulind.indicators.sma.indicator);
+const ema_async = util.promisify(tulind.indicators.ema.indicator);
+const rsi_async = util.promisify(tulind.indicators.rsi.indicator);
+const macd_async = util.promisify(tulind.indicators.macd.indicator);
+
+//SMA
+const sma_inc = async (data) => {
+  const d1 = data.map((d) => d.close);
+  const results = await sma_async([d1], [100]);
+  const d2 = results[0];
+  const diff = data.length - d2.length;
+  const emptyArray = [...new Array(diff)].map((d) => '');
+  const d3 = [...emptyArray, ...d2];
+  data = data.map((d, i) => ({ ...d, sma: d3[i] }));
+
+  return data;
+};
+//EMA
+const ema_inc = async (data) => {
+  const d1 = data.map((d) => d.close);
+  const results = await ema_async([d1], [21]);
+  const d2 = results[0];
+  const diff = data.length - d2.length;
+  const emptyArray = [...new Array(diff)].map((d) => '');
+  const d3 = [...emptyArray, ...d2];
+
+  data = data.map((d, i) => ({ ...d, ema: d3[i] }));
+
+  return data;
+};
+//RSI
+const rsi_inc = async (data) => {
+  const d1 = data.map((d) => d.close);
+  const results = await rsi_async([d1], [21]);
+  const d2 = results[0];
+  const diff = data.length - d2.length;
+  const emptyArray = [...new Array(diff)].map((d) => '');
+  const d3 = [...emptyArray, ...d2];
+
+  data = data.map((d, i) => ({ ...d, rsi: d3[i] }));
+  // console.log(data[data.length - 1]);
+  return data;
+};
+
+// MARKERS -- 1
+const markers_inc = (data) => {
+  // EMA21 CROSSOVER SMA100 -LONG
+  // EMA21 CROSSUNDER SMA100 -SHORT
+  data = data.map((d, i, arr) => {
+    const long = arr[i]?.ema > arr[i]?.sma && arr[i - 1]?.ema < arr[i - 1]?.sma ? true : false;
+    const short = arr[i]?.ema < arr[i]?.sma && arr[i - 1]?.ema > arr[i - 1]?.sma ? true : false;
+    return { ...d, long, short };
+  });
+  return data;
+};
+
+// MARKERS -- 1 - copy
+const markers_macd = (data) => {
+  // EMA21 CROSSOVER SMA100 -LONG
+  // EMA21 CROSSUNDER SMA100 -SHORT
+  data = data.map((d, i, arr) => {
+    const long = arr[i]?.macd_fast > arr[i]?.macd_slow && arr[i - 1]?.macd_fast < arr[i - 1]?.macd_slow ? true : false;
+    const short = arr[i]?.macd_fast < arr[i]?.macd_slow && arr[i - 1]?.macd_fast > arr[i - 1]?.macd_slow ? true : false;
+    return { ...d, long, short };
+  });
+  // console.log(data);
+  return data;
+};
+
+// MARKERS -- 2
+const macd_plo = (data) => {
+  // MACD -LONG
+  data = data.map((d, i, arr) => {
+    const m_long =
+      arr[i]?.macd_histogram < 0 &&
+      arr[i - 1]?.macd_histogram < arr[i - 2]?.macd_histogram &&
+      arr[i - 1]?.macd_histogram < arr[i]?.macd_histogram
+        ? true
+        : false;
+
+    const m_short =
+      arr[i]?.macd_histogram > 0 &&
+      arr[i - 1]?.macd_histogram > arr[i - 2]?.macd_histogram &&
+      arr[i - 1]?.macd_histogram > arr[i]?.macd_histogram
+        ? true
+        : false;
+    // macd-his>0 && (i<>>i-1&&i-1>i-2)
+    return { ...d, m_long, m_short };
+  });
+  // console.log(data);
+  return data;
+};
+
+// MARKERS -- 3
+const macd_clo = (data) => {
+  // MACD -LONG
+  data = data.map((d, i, arr) => {
+    const c_long =
+      arr[i]?.macd_histogram < 0 &&
+      arr[i - 2]?.macd_histogram < arr[i - 3]?.macd_histogram &&
+      arr[i - 2]?.macd_histogram < arr[i - 1]?.macd_histogram &&
+      arr[i - 1]?.macd_histogram < arr[i]?.macd_histogram
+        ? true
+        : false;
+
+    const c_short =
+      arr[i]?.macd_histogram > 0 &&
+      arr[i - 2]?.macd_histogram > arr[i - 3]?.macd_histogram &&
+      arr[i - 2]?.macd_histogram > arr[i - 1]?.macd_histogram &&
+      arr[i - 1]?.macd_histogram > arr[i]?.macd_histogram
+        ? true
+        : false;
+    // macd-his>0 && (i<>>i-1&&i-1>i-2)
+    return { ...d, c_long, c_short };
+  });
+  // console.log(data);
+  return data;
+};
+
+//MACD
+const macd_inc = async (data) => {
+  const d1 = data.map((d) => d.close);
+  const results = await macd_async([d1], [12, 26, 9]);
+  const diff = data.length - results[0].length;
+  const emptyArray = [...new Array(diff)].map((d) => '');
+  const macd1 = [...emptyArray, ...results[0]];
+  const macd2 = [...emptyArray, ...results[1]];
+  const macd3 = [...emptyArray, ...results[2]];
+
+  data = data.map((d, i) => ({
+    ...d,
+    macd_fast: macd1[i],
+    macd_slow: macd2[i],
+    macd_histogram: macd3[i],
+  }));
+  // console.log(data);
+  return data;
+};
+
+module.exports = {
+  sma_inc,
+  ema_inc,
+  rsi_inc,
+  macd_inc,
+  macd_plo,
+  macd_clo,
+};

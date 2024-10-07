@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="public/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="public/css/index.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="public/css/tailwind.css" />
+    <style>
+      #tvchart {
+        width: 60vw;
+        height: 60vh;
+      }
+      #subchart {
+        position: relative;
+        width: 60vw;
+        height: 30vh;
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>测试 指标页面</title>
+  </head>
+  <body>
+    <div class="section">
+      <h1 class="text-4xl font-bold text-center text-blue-300">小鸡快跑</h1>
+      <div class="section-header">
+        <div class="section-header-select-group">
+          <div class="section-header-select-group-item">
+            <select id="symbol">
+              <option value="BTCUSDT">BTCUSDT</option>
+              <option value="ETHUSDT" selected>ETHUSDT</option>
+              <option value="LUNAUSDT">LUNAUSDT</option>
+              <option value="AVAXUSDT">AVAXUSDT</option>
+              <option value="NEARUSDT">NEARUSDT</option>
+              <option value="RAYUSDT">RAYUSDT</option>
+              <option value="DYDXUSDT">DYDXUSDT</option>
+            </select>
+          </div>
+          <div class="section-header-select-group-item">
+            <select id="interval">
+              <option value="5m">5m</option>
+              <option value="15m" selected>15m</option>
+              <option value="30m">30m</option>
+              <option value="1h">1h</option>
+              <option value="4h">4h</option>
+              <option value="1d">1d</option>
+              <option value="1w">1w</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-chart">
+        <div id="tvchart" class="section-chart-ca"></div>
+      </div>
+
+      <div class="section-policy">
+        <div class="section-policy-select">
+          <div class="section-policy-select-group-item">
+            <select id="policy">
+              <option value="MACD">策略1</option>
+              <option value="SMA">策略2</option>
+            </select>
+          </div>
+          <div class="section-policy-btn">
+            <button id="start" type="button">开始执行</button>
+          </div>
+          <div class="section-policy-btn">
+            <button id="stop" type="button">停止执行</button>
+          </div>
+          <div class="section-policy-btn">
+            <button id="test" type="button">测试</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="public/tv2.js"></script>
+  <script src="public/socket.io.min.js"></script>
+  <script src="public/index.js"></script>
+</html>
